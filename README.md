@@ -1,5 +1,6 @@
 # nvimhub
-WIP
+WIP :: error :: thread panic in service(rust) when github api at limit
+
 fetch to extract Neovim plugin information from gitHub and serve it as a JSON
 
 ## 🦍 ## APE choose golang for API gateway
@@ -11,13 +12,14 @@ no stargaze show up 🦍 🦍
 🦍 golang be a gateway because of his infamous
 
 how to use
-go
+/gateway
 ```bash
-    go run
+    go run .
 ```
-rust
+/fetcher
 
 ```bash
+    cargo build
     cargo run
 ```
 service and gateway locate at
@@ -31,6 +33,7 @@ http://localhost:8080
 http://127.0.0.1:8081/data
 ```
 : service
+
 
 
 bash.sh is not recommended
