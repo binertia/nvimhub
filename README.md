@@ -13,13 +13,21 @@ no stargaze show up 🦍 🦍
 how to use
 go
 ```bash
-    go run .
+    go run
 ```
 rust
 
 ```bash
-    cargo run .
+    cargo run
 ```
-check server and gateway is work
-http://localhost:8080 : gateway
-http://127.0.0.1:8081 : service
+service and gateway locate at
+
+```
+http://localhost:8080
+```
+: gateway (access service by route /data)
+
+```
+http://127.0.0.1:8081/data
+```
+: service
