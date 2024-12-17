@@ -1,6 +1,8 @@
 # nvimhub
 WIP :: error :: thread panic in service(rust) when github api at limit
 
+Personal use :: If you also lazy to open github for check nvim new plugin. just fetch it to terminal
+you can change search subject by replace my argument and curl when you need.
 fetch to extract Neovim plugin information from gitHub and serve it as a JSON
 
 ## 🦍 ## APE choose golang for API gateway
