@@ -35,41 +35,50 @@ async fn main() {
     warp::serve(data).run(([127, 0, 0, 1], 8081)).await;
 }
 
+// TODO: process time still up to 6 secounds. better do pararell stream fetch
 async fn fetch_github_repositories() -> Result<Vec<Repository>, Error> {
-    let url = "https://api.github.com/search/repositories?q=nvim+plugin";
-
+    let base_url = "https://api.github.com/search/repositories?q=nvim+plugin";
     let client = reqwest::Client::new();
-    let response = client
-        .get(url)
-        .header("User-Agent", "Rust reqwest") // github neeeeeed
-        .send()
-        .await?;
+    let mut all_repos: Vec<Repository> = Vec::new();
 
-    assert!(
-        response.status().is_success(),
-        "github fetch request failed"
-    );
+    // fetch 120 repo
+    for page in 1..=4 {
+        let url = format!("{}&per_page=100&page={}", base_url, page);
+        println!("Fetching page: {}", page); // log
+        let response = client
+            .get(url)
+            .header("User-Agent", "Rust reqwest") // github neeeeeed
+            .send()
+            .await?;
 
-    let search_result: SearchResult = response.json().await?;
+        assert!(
+            response.status().is_success(),
+            "github fetch request failed"
+        );
 
-    assert!(!search_result.items.is_empty(), "No repositories found");
+        let search_result: SearchResult = response.json().await?;
 
-    // to map
-    let mut repos: Vec<Repository> = search_result
-        .items
-        .into_iter()
-        .map(|repo| Repository {
-            name: repo.name,
-            description: repo.description,
-            html_url: repo.html_url,
-            stargazers_count: repo.stargazers_count,
-        })
-        .collect();
+        assert!(!search_result.items.is_empty(), "No repositories found");
+
+        // to vec
+        let repos: Vec<Repository> = search_result
+            .items
+            .into_iter()
+            .map(|repo| Repository {
+                name: repo.name,
+                description: repo.description,
+                html_url: repo.html_url,
+                stargazers_count: repo.stargazers_count,
+            })
+            .collect();
+
+        all_repos.extend(repos);
+    }
 
     // sort by star count
-    repos.sort_by(|a, b| a.stargazers_count.cmp(&b.stargazers_count));
+    all_repos.sort_by(|a, b| a.stargazers_count.cmp(&b.stargazers_count));
 
-    Ok(repos)
+    Ok(all_repos)
 }
 
 async fn handle_fetch() -> Result<impl warp::Reply, warp::Rejection> {
